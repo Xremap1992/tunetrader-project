@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TuneTrader - Оферти</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .back-btn {
+            background: #34495e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .back-btn:hover {
+            background: #2c3e50;
+        }
+        .filters {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .filter-group label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        .filter-group select {
+            padding: 8px 12px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        .bid-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+        .bid-card:hover {
+            transform: translateY(-2px);
+        }
+        .bid-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        .file-info h3 {
+            margin: 0 0 5px 0;
+            color: #3498db;
+            font-size: 1.3rem;
+        }
+        .file-info p {
+            margin: 0;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+        .bid-amount {
+            text-align: right;
+        }
+        .amount {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2ecc71;
+            margin-bottom: 5px;
+        }
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .status-pending {
+            background: #f39c12;
+            color: white;
+        }
+        .status-accepted {
+            background: #2ecc71;
+            color: white;
+        }
+        .status-rejected {
+            background: #e74c3c;
+            color: white;
+        }
+        .tuner-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .tuner-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        .tuner-details h4 {
+            margin: 0 0 5px 0;
+            color: #3498db;
+        }
+        .tuner-details p {
+            margin: 0;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+        .bid-message {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+        .bid-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.3s ease;
+        }
+        .btn-accept {
+            background: #2ecc71;
+            color: white;
+        }
+        .btn-accept:hover {
+            background: #27ae60;
+        }
+        .btn-reject {
+            background: #e74c3c;
+            color: white;
+        }
+        .btn-reject:hover {
+            background: #c0392b;
+        }
+        .btn-message {
+            background: #3498db;
+            color: white;
+        }
+        .btn-message:hover {
+            background: #2980b9;
+        }
+        .btn-view {
+            background: #95a5a6;
+            color: white;
+        }
+        .btn-view:hover {
+            background: #7f8c8d;
+        }
+        .no-bids {
+            text-align: center;
+            padding: 60px 20px;
+            opacity: 0.7;
+        }
+        .no-bids h3 {
+            margin-bottom: 15px;
+            color: #3498db;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            color: white;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-btn" onclick="goBack()">← Назад към панела</button>
+        
+        <div class="header">
+            <h1>📊 Оферти</h1>
+            <p>Преглеждайте и управлявайте офертите за вашите файлове</p>
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label>Статус</label>
+                <select id="statusFilter" onchange="filterBids()">
+                    <option value="all">Всички</option>
+                    <option value="pending">Чакащи</option>
+                    <option value="accepted">Приети</option>
+                    <option value="rejected">Отхвърлени</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Файл</label>
+                <select id="fileFilter" onchange="filterBids()">
+                    <option value="all">Всички файлове</option>
+                    <option value="bmw">BMW 320d</option>
+                    <option value="mercedes">Mercedes Sprinter</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Сортиране</label>
+                <select id="sortFilter" onchange="filterBids()">
+                    <option value="date">По дата</option>
+                    <option value="amount">По сума</option>
+                    <option value="status">По статус</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="bidsContainer">
+            <!-- BMW 320d Bids -->
+            <div class="bid-card" data-status="pending" data-file="bmw" data-amount="150" data-date="2025-06-01">
+                <div class="bid-header">
+                    <div class="file-info">
+                        <h3>BMW 320d Stage 1 Tune</h3>
+                        <p>BMW 320d 2019 • Diesel • Качен: 01.06.2025</p>
+                    </div>
+                    <div class="bid-amount">
+                        <div class="amount">€150</div>
+                        <span class="status-badge status-pending">Чака отговор</span>
+                    </div>
+                </div>
+                
+                <div class="tuner-info">
+                    <div class="tuner-avatar">TP</div>
+                    <div class="tuner-details">
+                        <h4>TunerPro123</h4>
+                        <p>⭐ 4.8/5 • 127 завършени проекта</p>
+                    </div>
+                </div>
+                
+                <div class="bid-message">
+                    "Мога да направя Stage 1 тунинг с +30hp/+60Nm. Включва оптимизация на горивната икономия и премахване на DPF грешки. Срок: 2-3 дни."
+                </div>
+                
+                <div class="bid-actions">
+                    <button class="btn btn-accept" onclick="acceptBid('bid1')">✅ Приеми</button>
+                    <button class="btn btn-reject" onclick="rejectBid('bid1')">❌ Отхвърли</button>
+                    <button class="btn btn-message" onclick="openChat('TunerPro123')">💬 Съобщение</button>
+                    <button class="btn btn-view" onclick="viewTunerProfile('TunerPro123')">👤 Профил</button>
+                </div>
+            </div>
+
+            <div class="bid-card" data-status="pending" data-file="bmw" data-amount="175" data-date="2025-06-01">
+                <div class="bid-header">
+                    <div class="file-info">
+                        <h3>BMW 320d Stage 1 Tune</h3>
+                        <p>BMW 320d 2019 • Diesel • Качен: 01.06.2025</p>
+                    </div>
+                    <div class="bid-amount">
+                        <div class="amount">€175</div>
+                        <span class="status-badge status-pending">Чака отговор</span>
+                    </div>
+                </div>
+                
+                <div class="tuner-info">
+                    <div class="tuner-avatar">TE</div>
+                    <div class="tuner-details">
+                        <h4>TunerExpert</h4>
+                        <p>⭐ 4.9/5 • 89 завършени проекта</p>
+                    </div>
+                </div>
+                
+                <div class="bid-message">
+                    "Специализирам се в BMW тунинг. Ще направя пълна оптимизация с гаранция 6 месеца. Включва и pop & bang звуци по желание. Срок: 1-2 дни."
+                </div>
+                
+                <div class="bid-actions">
+                    <button class="btn btn-accept" onclick="acceptBid('bid2')">✅ Приеми</button>
+                    <button class="btn btn-reject" onclick="rejectBid('bid2')">❌ Отхвърли</button>
+                    <button class="btn btn-message" onclick="openChat('TunerExpert')">💬 Съобщение</button>
+                    <button class="btn btn-view" onclick="viewTunerProfile('TunerExpert')">👤 Профил</button>
+                </div>
+            </div>
+
+            <!-- Mercedes Sprinter Bid (Accepted) -->
+            <div class="bid-card" data-status="accepted" data-file="mercedes" data-amount="200" data-date="2025-05-28">
+                <div class="bid-header">
+                    <div class="file-info">
+                        <h3>Mercedes Sprinter DPF Delete</h3>
+                        <p>Mercedes Sprinter 2018 • Diesel • Качен: 28.05.2025</p>
+                    </div>
+                    <div class="bid-amount">
+                        <div class="amount">€200</div>
+                        <span class="status-badge status-accepted">Приета</span>
+                    </div>
+                </div>
+                
+                <div class="tuner-info">
+                    <div class="tuner-avatar">TE</div>
+                    <div class="tuner-details">
+                        <h4>TunerExpert</h4>
+                        <p>⭐ 4.9/5 • 89 завършени проекта</p>
+                    </div>
+                </div>
+                
+                <div class="bid-message">
+                    "Пълно премахване на DPF и EGR системите с custom mapping. Проектът е завършен и файлът е готов за изтегляне."
+                </div>
+                
+                <div class="bid-actions">
+                    <button class="btn btn-view" onclick="downloadFile('mercedes_sprinter_tuned.bin')">📥 Изтегли файл</button>
+                    <button class="btn btn-message" onclick="openChat('TunerExpert')">💬 Съобщение</button>
+                    <button class="btn btn-view" onclick="viewProject('project2')">📋 Детайли</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Accept Bid Modal -->
+    <div id="acceptModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('acceptModal')">&times;</span>
+            <h2>✅ Потвърждение на оферта</h2>
+            <p>Сигурни ли сте, че искате да приемете тази оферта?</p>
+            <div id="acceptBidDetails"></div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-accept" onclick="confirmAcceptBid()" style="flex: 1;">Да, приеми</button>
+                <button class="btn btn-view" onclick="closeModal('acceptModal')" style="flex: 1;">Отказ</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentBidId = null;
+
+        // Check authentication
+        if (!localStorage.getItem('token')) {
+            window.location.href = '/login';
+        }
+
+        function goBack() {
+            window.location.href = '/client-dashboard';
+        }
+
+        function filterBids() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const fileFilter = document.getElementById('fileFilter').value;
+            const sortFilter = document.getElementById('sortFilter').value;
+            
+            const bidCards = document.querySelectorAll('.bid-card');
+            let visibleBids = [];
+            
+            bidCards.forEach(card => {
+                let show = true;
+                
+                if (statusFilter !== 'all' && card.dataset.status !== statusFilter) {
+                    show = false;
+                }
+                
+                if (fileFilter !== 'all' && card.dataset.file !== fileFilter) {
+                    show = false;
+                }
+                
+                if (show) {
+                    card.style.display = 'block';
+                    visibleBids.push(card);
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // Sort visible bids
+            if (sortFilter === 'amount') {
+                visibleBids.sort((a, b) => parseFloat(b.dataset.amount) - parseFloat(a.dataset.amount));
+            } else if (sortFilter === 'date') {
+                visibleBids.sort((a, b) => new Date(b.dataset.date) - new Date(a.dataset.date));
+            }
+            
+            // Re-append sorted bids
+            const container = document.getElementById('bidsContainer');
+            visibleBids.forEach(bid => container.appendChild(bid));
+        }
+
+        function acceptBid(bidId) {
+            currentBidId = bidId;
+            document.getElementById('acceptBidDetails').innerHTML = `
+                <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; margin: 15px 0;">
+                    <p><strong>Тунер:</strong> ${bidId === 'bid1' ? 'TunerPro123' : 'TunerExpert'}</p>
+                    <p><strong>Сума:</strong> €${bidId === 'bid1' ? '150' : '175'}</p>
+                    <p><strong>Файл:</strong> BMW 320d Stage 1 Tune</p>
+                </div>
+                <p style="color: #f39c12; font-size: 0.9rem;">
+                    ⚠️ След приемане на офертата, сумата ще бъде блокирана от вашия баланс до завършване на проекта.
+                </p>
+            `;
+            document.getElementById('acceptModal').style.display = 'block';
+        }
+
+        function confirmAcceptBid() {
+            // Simulate API call
+            setTimeout(() => {
+                alert('Офертата е приета успешно! Тунерът е уведомен и ще започне работа по проекта.');
+                closeModal('acceptModal');
+                
+                // Update bid status in UI
+                const bidCard = document.querySelector(`[onclick="acceptBid('${currentBidId}')"]`).closest('.bid-card');
+                const statusBadge = bidCard.querySelector('.status-badge');
+                statusBadge.textContent = 'Приета';
+                statusBadge.className = 'status-badge status-accepted';
+                bidCard.dataset.status = 'accepted';
+                
+                // Update actions
+                const actions = bidCard.querySelector('.bid-actions');
+                actions.innerHTML = `
+                    <button class="btn btn-message" onclick="openChat('${currentBidId === 'bid1' ? 'TunerPro123' : 'TunerExpert'}')">💬 Съобщение</button>
+                    <button class="btn btn-view" onclick="viewProject('${currentBidId}')">📋 Следи прогреса</button>
+                `;
+            }, 1000);
+        }
+
+        function rejectBid(bidId) {
+            if (confirm('Сигурни ли сте, че искате да отхвърлите тази оферта?')) {
+                // Simulate API call
+                setTimeout(() => {
+                    alert('Офертата е отхвърлена.');
+                    
+                    // Update bid status in UI
+                    const bidCard = document.querySelector(`[onclick="rejectBid('${bidId}')"]`).closest('.bid-card');
+                    const statusBadge = bidCard.querySelector('.status-badge');
+                    statusBadge.textContent = 'Отхвърлена';
+                    statusBadge.className = 'status-badge status-rejected';
+                    bidCard.dataset.status = 'rejected';
+                    
+                    // Update actions
+                    const actions = bidCard.querySelector('.bid-actions');
+                    actions.innerHTML = `
+                        <button class="btn btn-message" onclick="openChat('${bidId === 'bid1' ? 'TunerPro123' : 'TunerExpert'}')">💬 Съобщение</button>
+                        <button class="btn btn-view" onclick="viewTunerProfile('${bidId === 'bid1' ? 'TunerPro123' : 'TunerExpert'}')">👤 Профил</button>
+                    `;
+                }, 500);
+            }
+        }
+
+        function openChat(tunerName) {
+            alert(`Отваряне на чат с ${tunerName}... (функционалността ще бъде добавена скоро)`);
+        }
+
+        function viewTunerProfile(tunerName) {
+            alert(`Преглед на профила на ${tunerName}... (функционалността ще бъде добавена скоро)`);
+        }
+
+        function viewProject(projectId) {
+            alert(`Преглед на проект ${projectId}... (функционалността ще бъде добавена скоро)`);
+        }
+
+        function downloadFile(filename) {
+            alert(`Изтегляне на ${filename}... (функционалността ще бъде добавена скоро)`);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+
